@@ -238,7 +238,7 @@
           <p>
             only claimowners, whitelisted players and accesslevel allowed
             players can place any block within this adv. claim. Type=
-            "landclaim". Violation string configurable in CpmStrings.xml
+            "landclaim". Violation string configurable in PrismaCoreStrings.xml
             (AdvClaims_Landclaim). Auto giveback to placing player.
           </p>
         </div>
@@ -247,7 +247,7 @@
           <p>
             Use this claim to prevent placement of blocks that are not
             configured as problock(s). Violation string configurable in
-            CpmStrings.xml (AdvClaims_ProBlock). Auto giveback to placing
+            PrismaCoreStrings.xml (AdvClaims_ProBlock). Auto giveback to placing
             player.
           </p>
           <label for="problockBlocks">Allowed blocks</label>

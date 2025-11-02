@@ -54,7 +54,7 @@ export default {
     };
   },
   computed: {
-    cpmPort: function() {
+    ClaimCreatorPort: function() {
       return parseInt(this.connectionInfo.port) + 1;
     },
   },
