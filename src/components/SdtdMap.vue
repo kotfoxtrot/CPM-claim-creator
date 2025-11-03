@@ -111,7 +111,7 @@ export default {
     };
   },
   computed: {
-    cpmPort: function() {
+    ClaimCreatorPort: function() {
       return parseInt(this.connectionInfo.port) + 1;
     },
     activeColor: function() {
@@ -173,7 +173,7 @@ export default {
         });
     },
     async drawLandClaims() {
-      if (!this.hasPermission("cpmcc.getlandclaims")) {
+      if (!this.hasPermission("ClaimCreator.getlandclaims")) {
         return;
       }
 
@@ -215,7 +215,7 @@ export default {
         });
     },
     async drawPois() {
-      if (!this.hasPermission("cpmcc.getallpois")) {
+      if (!this.hasPermission("ClaimCreator.getallpois")) {
         return;
       }
 
@@ -253,7 +253,7 @@ export default {
         });
     },
     async drawTraders() {
-      if (!this.hasPermission("cpmcc.gettraders")) {
+      if (!this.hasPermission("ClaimCreator.gettraders")) {
         return;
       }
 
@@ -293,7 +293,7 @@ export default {
         });
     },
     async drawPlayers() {
-      if (!this.hasPermission("cpmcc.getplayersonline")) {
+      if (!this.hasPermission("ClaimCreator.getplayersonline")) {
         return;
       }
 
@@ -331,7 +331,7 @@ export default {
         });
     },
     async drawQuestPoi() {
-      if (!this.hasPermission("cpmcc.getquestpois")) {
+      if (!this.hasPermission("ClaimCreator.getquestpois")) {
         return;
       }
 
@@ -378,7 +378,7 @@ export default {
         });
     },
     async drawVehicles() {
-      if (!this.hasPermission("cpmcc.getvehicles")) {
+      if (!this.hasPermission("ClaimCreator.getvehicles")) {
         return;
       }
 
@@ -411,7 +411,7 @@ export default {
         });
     },
     async drawHomes() {
-      if (!this.hasPermission("cpmcc.getplayerhomes")) {
+      if (!this.hasPermission("ClaimCreator.getplayerhomes")) {
         return;
       }
 
@@ -612,11 +612,11 @@ export default {
     },
     async drawClaim(claimType) {
       if (claimType === "resetregion") {
-        if (!this.hasPermission("cpmcc.getresetregions")) {
+        if (!this.hasPermission("ClaimCreator.getresetregions")) {
           return;
         }
       } else {
-        if (!this.hasPermission("cpmcc.getadvclaims")) {
+        if (!this.hasPermission("ClaimCreator.getadvclaims")) {
           return;
         }
       }

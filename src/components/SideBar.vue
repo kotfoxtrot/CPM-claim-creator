@@ -38,9 +38,9 @@ export default {
         title: "Log out"
       });
       for (const permission of this.userStatus.permissions) {
-        if (permission.module !== "cpmcc.Null") {
+        if (permission.module !== "ClaimCreator.Null") {
           userMenuEntry.child.push({
-            title: `${permission.module.replace("cpmcc.", "")} - ${
+            title: `${permission.module.replace("ClaimCreator.", "")} - ${
               permission.allowed ? "Yes" : "No"
             }`
           });
@@ -96,7 +96,7 @@ export default {
       menu: [
         {
           header: true,
-          title: "CPM Web UI",
+          title: "PrismaCore ClaimCreator",
           hiddenOnCollapse: true
         },
         {
