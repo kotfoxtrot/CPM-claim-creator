@@ -31,6 +31,8 @@ import SideBar from './components/SideBar.vue';
 
 // Custom components
 require("../node_modules/leaflet/dist/leaflet.css");
+require("../node_modules/leaflet.markercluster/dist/MarkerCluster.css");
+require("../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css");
 
 window.claimTypes = [
   "hostilefree",

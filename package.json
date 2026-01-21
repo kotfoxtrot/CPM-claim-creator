@@ -19,6 +19,7 @@
     "jquery": "^3.4.1",
     "jsonp": "^0.2.1",
     "leaflet": "^1.5.1",
+    "leaflet.markercluster": "^1.5.3",
     "popper.js": "^1.15.0",
     "vue": "^2.6.10",
     "vue-sidebar-menu": "^4.4.1"

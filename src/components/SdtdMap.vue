@@ -21,6 +21,7 @@
 
 <script>
 import L from "leaflet";
+import "leaflet.markercluster";
 import { eventBus } from "../main";
 import { setInterval } from "timers";
 import getClaims from "../helpers/getClaims";
@@ -42,7 +43,7 @@ const homeIcon = L.icon({
 
 const vehicleIcon = L.icon({
   iconUrl: "img/vehicle-icon.png",
-  iconSize: [30, 30],
+  iconSize: [50, 50],
   iconAnchor: [12, 24],
   popupAnchor: [0, -20],
 });
@@ -50,31 +51,31 @@ const vehicleIcon = L.icon({
 const vehicleIcons = {
   bicycle: L.icon({
     iconUrl: "img/ui_game_symbol_bicycle.png",
-    iconSize: [30, 30],
+    iconSize: [50, 50],
     iconAnchor: [12, 24],
     popupAnchor: [0, -20],
   }),
   minibike: L.icon({
     iconUrl: "img/ui_game_symbol_minibike.png",
-    iconSize: [30, 30],
+    iconSize: [50, 50],
     iconAnchor: [12, 24],
     popupAnchor: [0, -20],
   }),
   motorcycle: L.icon({
     iconUrl: "img/ui_game_symbol_motorcycle.png",
-    iconSize: [30, 30],
+    iconSize: [50, 50],
     iconAnchor: [12, 24],
     popupAnchor: [0, -20],
   }),
   gyrocopter: L.icon({
     iconUrl: "img/ui_game_symbol_gyrocopter.png",
-    iconSize: [30, 30],
+    iconSize: [50, 50],
     iconAnchor: [12, 24],
     popupAnchor: [0, -20],
   }),
   truck4x4: L.icon({
     iconUrl: "img/ui_game_symbol_4x4.png",
-    iconSize: [30, 30],
+    iconSize: [50, 50],
     iconAnchor: [12, 24],
     popupAnchor: [0, -20],
   }),
@@ -488,7 +489,11 @@ export default {
       const currentPlayers = await this.getPlayers();
       let playersLayer = this.layers["Online players"];
       if (!playersLayer) {
-        this.layers["Online players"] = new L.LayerGroup();
+        this.layers["Online players"] = L.markerClusterGroup({
+          showCoverageOnHover: false,
+          spiderfyOnMaxZoom: true,
+          iconCreateFunction: this.createClusterIcon("player"),
+        });
         playersLayer = this.layers["Online players"];
       }
 
@@ -569,7 +574,11 @@ export default {
       const currentVehicles = await this.getVehicles();
       let vehiclesLayer = this.layers["Vehicles"];
       if (!vehiclesLayer) {
-        this.layers["Vehicles"] = new L.LayerGroup();
+        this.layers["Vehicles"] = L.markerClusterGroup({
+          showCoverageOnHover: false,
+          spiderfyOnMaxZoom: true,
+          iconCreateFunction: this.createClusterIcon("vehicle"),
+        });
         vehiclesLayer = this.layers["Vehicles"];
       }
 
@@ -1013,6 +1022,24 @@ export default {
       new L.Control.Coordinates({ position: "topright" }).addTo(this.map);
       return;
     },
+    createClusterIcon(kind) {
+      return (cluster) => {
+        const count = cluster.getChildCount();
+        return L.divIcon({
+          html: `<div><img src="${this.getClusterIconUrl(
+            kind
+          )}" alt="" /><span>${count}</span></div>`,
+          className: `marker-cluster marker-cluster-${kind}`,
+          iconSize: L.point(40, 40),
+        });
+      };
+    },
+    getClusterIconUrl(kind) {
+      if (kind === "vehicle") {
+        return "img/ui_game_symbol_drive.png";
+      }
+      return "img/ui_game_symbol_character.png";
+    },
   },
 };
 </script>
@@ -1031,5 +1058,46 @@ export default {
   color: white;
   font-size: 1.3em;
   text-shadow: 0.07em 0 black, 0 0.07em black, -0.07em 0 black, 0 -0.07em black;
+}
+
+.marker-cluster-player div {
+  background: rgba(48, 140, 255, 0.85);
+  color: #fff;
+  border: 2px solid rgba(15, 60, 120, 0.9);
+  box-shadow: 0 0 0 2px rgba(15, 60, 120, 0.3);
+}
+
+.marker-cluster-vehicle div {
+  background: rgba(255, 148, 33, 0.85);
+  color: #fff;
+  border: 2px solid rgba(140, 70, 10, 0.9);
+  box-shadow: 0 0 0 2px rgba(140, 70, 10, 0.3);
+}
+
+.marker-cluster-player div,
+.marker-cluster-vehicle div {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: bold;
+  position: relative;
+}
+
+.marker-cluster-player span,
+.marker-cluster-vehicle span {
+  position: absolute;
+  right: 6px;
+  bottom: 2px;
+  font-size: 18px;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.marker-cluster-player img,
+.marker-cluster-vehicle img {
+  width: 22px;
+  height: 22px;
+  margin-top: 8px;
 }
 </style>
