@@ -2,7 +2,7 @@
   <div id="map-container">
     <div id="map">
       <center>{{ mapMessage }}</center>
-      <div class="leaflet-bottom leaflet-right">
+      <div class="leaflet-bottom leaflet-right" v-if="canCreateAdvClaims">
         <b-button-group size="sm" id="selection-control" vertical>
           <b-button :disabled="selectionMode === 'area'" @click="areaSelect"
             >Select area</b-button
@@ -117,6 +117,9 @@ export default {
     activeColor: function() {
       return this.colors[this.colorIterator];
     },
+    canCreateAdvClaims: function() {
+      return this.hasPermission("ClaimCreator.createadvclaims");
+    },
   },
 
   async mounted() {
@@ -147,6 +150,9 @@ export default {
 
   methods: {
     hasPermission(permModule) {
+      if (!this.userStatus || !Array.isArray(this.userStatus.permissions)) {
+        return false;
+      }
       const permission = this.userStatus.permissions.find(
         (p) => p.module.toUpperCase() === permModule.toUpperCase()
       );
@@ -491,6 +497,9 @@ export default {
       this.initLayers();
       this.createCoordinateControl();
       this.map.on("click", (event) => {
+        if (!this.canCreateAdvClaims) {
+          return;
+        }
         if (this.selectionMode === "area") {
           if (this.clickMarkers.length > 1) {
             this.clickMarkers[0].remove();
