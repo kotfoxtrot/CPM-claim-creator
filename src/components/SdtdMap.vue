@@ -316,12 +316,13 @@ export default {
       return traderIcons[baseName] || traderIcon;
     },
     formatPlayerPopup(player) {
+      const playerLabel = this.formatSteamLink(player.name, player.steamid);
       if (this.canCreateAdvClaims) {
-        return `${player.name}<br>${player.steamid}<br>Position: ${
+        return `${playerLabel}<br>${player.steamid}<br>Position: ${
           player.position.x
         } ${player.position.y} ${player.position.z}`;
       }
-      return `${player.name}`;
+      return `${playerLabel}`;
     },
     formatTraderName(traderName) {
       if (this.canCreateAdvClaims) {
@@ -336,16 +337,31 @@ export default {
       return `Trader ${title}`;
     },
     formatLandClaimPopup(lcbOwner, lcb) {
+      const ownerLabel = this.formatSteamLink(
+        lcbOwner.playername,
+        lcbOwner.steamid
+      );
       if (!this.canCreateAdvClaims) {
-        return `Player: ${lcbOwner.playername}<br>Status: ${
+        return `Player: ${ownerLabel}<br>Status: ${
           lcbOwner.claimactive ? "Active" : "Inactive"
         }`;
       }
-      return `Player: ${lcbOwner.playername}<br>Status: ${
+      return `Player: ${ownerLabel}<br>Status: ${
         lcbOwner.claimactive ? "Active" : "Inactive"
       }<br>${lcbOwner.steamid}<br>${lcbOwner.eos_id}<br>Position: ${lcb.x} ${
         lcb.y
       } ${lcb.z}`;
+    },
+    formatSteamLink(name, steamid) {
+      const safeName = String(name || "");
+      let safeId = String(steamid || "").trim();
+      if (safeId.toLowerCase().startsWith("steam_")) {
+        safeId = safeId.slice("steam_".length);
+      }
+      if (!safeId) {
+        return safeName;
+      }
+      return `<a class="steam-profile-link" href="https://steamcommunity.com/profiles/${safeId}" target="_blank" rel="noopener noreferrer">${safeName}</a>`;
     },
     getUserStatus() {
       return fetch("/userstatus")
@@ -1099,5 +1115,16 @@ export default {
   width: 22px;
   height: 22px;
   margin-top: 8px;
+}
+
+.steam-profile-link {
+  font-size: 1.3em;
+  text-decoration: none;
+}
+
+.steam-profile-link:hover,
+.steam-profile-link:focus {
+  color: #1e6bd6;
+  text-decoration: underline;
 }
 </style>
