@@ -35,24 +35,90 @@ const playerIcon = L.icon({
 
 const homeIcon = L.icon({
   iconUrl: "img/home-icon.png",
-  iconSize: [25, 25],
+  iconSize: [40, 40],
   iconAnchor: [12, 24],
   popupAnchor: [0, -20],
 });
 
 const vehicleIcon = L.icon({
   iconUrl: "img/vehicle-icon.png",
-  iconSize: [50, 50],
+  iconSize: [30, 30],
   iconAnchor: [12, 24],
   popupAnchor: [0, -20],
 });
 
+const vehicleIcons = {
+  bicycle: L.icon({
+    iconUrl: "img/ui_game_symbol_bicycle.png",
+    iconSize: [30, 30],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  minibike: L.icon({
+    iconUrl: "img/ui_game_symbol_minibike.png",
+    iconSize: [30, 30],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  motorcycle: L.icon({
+    iconUrl: "img/ui_game_symbol_motorcycle.png",
+    iconSize: [30, 30],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  gyrocopter: L.icon({
+    iconUrl: "img/ui_game_symbol_gyrocopter.png",
+    iconSize: [30, 30],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  truck4x4: L.icon({
+    iconUrl: "img/ui_game_symbol_4x4.png",
+    iconSize: [30, 30],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+};
+
 const traderIcon = L.icon({
   iconUrl: "img/shopping-cart.png",
-  iconSize: [25, 25],
+  iconSize: [40, 40],
   iconAnchor: [12, 24],
   popupAnchor: [0, -20],
 });
+
+const traderIcons = {
+  trader_bob: L.icon({
+    iconUrl: "img/trader_bob.png",
+    iconSize: [40, 40],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  trader_hugh: L.icon({
+    iconUrl: "img/trader_hugh.png",
+    iconSize: [40, 40],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  trader_jen: L.icon({
+    iconUrl: "img/trader_jen.png",
+    iconSize: [40, 40],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  trader_joel: L.icon({
+    iconUrl: "img/trader_joel.png",
+    iconSize: [40, 40],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+  trader_rekt: L.icon({
+    iconUrl: "img/trader_rekt.png",
+    iconSize: [40, 40],
+    iconAnchor: [12, 24],
+    popupAnchor: [0, -20],
+  }),
+};
 
 export default {
   name: "sdtd-map",
@@ -216,6 +282,38 @@ export default {
       }
       return lines.join("<br>");
     },
+    getVehicleIcon(vehicleName) {
+      const name = String(vehicleName || "").toLowerCase();
+      if (name.includes("bicycle") || name.includes("велосипед")) {
+        return vehicleIcons.bicycle;
+      }
+      if (
+        name.includes("minibike") ||
+        name.includes("mini-bike") ||
+        name.includes("мини-байк") ||
+        name.includes("мини байк")
+      ) {
+        return vehicleIcons.minibike;
+      }
+      if (name.includes("motorcycle") || name.includes("мотоцикл")) {
+        return vehicleIcons.motorcycle;
+      }
+      if (name.includes("gyrocopter") || name.includes("gyro")) {
+        return vehicleIcons.gyrocopter;
+      }
+      if (
+        name.includes("truck4x4") ||
+        name.includes("4x4") ||
+        name.includes("truck")
+      ) {
+        return vehicleIcons.truck4x4;
+      }
+      return vehicleIcon;
+    },
+    getTraderIcon(traderName) {
+      const baseName = String(traderName || "").split(".")[0];
+      return traderIcons[baseName] || traderIcon;
+    },
     formatPlayerPopup(player) {
       if (this.canCreateAdvClaims) {
         return `${player.name}<br>${player.steamid}<br>Position: ${
@@ -367,7 +465,7 @@ export default {
           "green"
         );
         const marker = L.marker([trader.x, trader.z], {
-          icon: traderIcon,
+          icon: this.getTraderIcon(trader.name),
         }).bindPopup(this.formatTraderName(trader.name));
         tradersLayer.addLayer(marker);
         tradersLayer.addLayer(traderRec);
@@ -478,7 +576,7 @@ export default {
       vehiclesLayer.clearLayers();
       for (const vehicle of currentVehicles.Vehicles) {
         const marker = L.marker([vehicle.posX, vehicle.posZ], {
-          icon: vehicleIcon,
+          icon: this.getVehicleIcon(vehicle.name),
         }).bindPopup(this.formatVehiclePopup(vehicle));
         vehiclesLayer.addLayer(marker);
       }
