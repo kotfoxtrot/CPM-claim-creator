@@ -160,6 +160,94 @@ export default {
 
       return permission.allowed;
     },
+    parseVehicleName(rawName) {
+      const parts = String(rawName || "").split(/<BR>/i);
+      let header = parts[0] || "";
+      let status = null;
+      let id = null;
+      let owner = null;
+
+      const statusMatch = header.match(/^\(([^)]+)\)/);
+      if (statusMatch) {
+        status = statusMatch[1].trim();
+        header = header.replace(statusMatch[0], "").trim();
+      }
+
+      const idMatch = header.match(/\(Id:\s*([^)]+)\)/i);
+      if (idMatch) {
+        id = idMatch[1].trim();
+        header = header.replace(idMatch[0], "").trim();
+      }
+
+      for (const part of parts.slice(1)) {
+        const ownerMatch = part.match(/Owner:\s*(.*)/i);
+        if (ownerMatch) {
+          owner = ownerMatch[1].trim();
+          break;
+        }
+      }
+
+      return {
+        vehicleName: header || rawName,
+        status,
+        id,
+        owner,
+      };
+    },
+    formatVehiclePopup(vehicle) {
+      const parsed = this.parseVehicleName(vehicle.name);
+      const lines = [];
+      lines.push(`Vehicle: ${parsed.vehicleName}`);
+      if (this.canCreateAdvClaims) {
+        if (parsed.status) {
+          lines.push(`Status: ${parsed.status}`);
+        }
+        if (parsed.id) {
+          lines.push(`Id: ${parsed.id}`);
+        }
+      }
+      if (parsed.owner) {
+        lines.push(`Owner: ${parsed.owner}`);
+      }
+      if (this.canCreateAdvClaims) {
+        lines.push(
+          `Position: ${vehicle.posX} ${vehicle.posY} ${vehicle.posZ}`
+        );
+      }
+      return lines.join("<br>");
+    },
+    formatPlayerPopup(player) {
+      if (this.canCreateAdvClaims) {
+        return `${player.name}<br>${player.steamid}<br>Position: ${
+          player.position.x
+        } ${player.position.y} ${player.position.z}`;
+      }
+      return `${player.name}`;
+    },
+    formatTraderName(traderName) {
+      if (this.canCreateAdvClaims) {
+        return traderName;
+      }
+      const baseName = String(traderName || "").split(".")[0];
+      if (!baseName.startsWith("trader_")) {
+        return traderName;
+      }
+      const rawName = baseName.slice("trader_".length).replace(/_/g, " ");
+      const title = rawName.replace(/\b\w/g, (char) => char.toUpperCase());
+      return `Trader ${title}`;
+    },
+    formatLandClaimPopup(lcbOwner, lcb) {
+      if (!this.canCreateAdvClaims) {
+        return `Player: ${lcbOwner.playername}<br>Status: ${
+          lcbOwner.claimactive ? "Active" : "Inactive"
+        }`;
+      }
+      return `Player: ${lcbOwner.playername}<br>Status: ${
+        lcbOwner.claimactive ? "Active" : "Inactive"
+      }<br>${lcbOwner.steamid}<br>${lcbOwner.eos_id}<br>Position: ${lcb.x} ${
+        lcb.y
+      } ${lcb.z}`;
+    },
     getUserStatus() {
       return fetch("/userstatus")
         .then((response) => {
@@ -201,11 +289,7 @@ export default {
             [lcb.x + claimRadius, lcb.z + claimRadius]],
             {color: claimcolor,
             weight: 1,
-          }).bindPopup(
-            `${lcbOwner.playername} - ${lcbOwner.steamid} <br> EOS_id: ${lcbOwner.eos_id} <br> Position: ${lcb.x} ${lcb.y} ${lcb.z} <br> Status: ${
-              lcbOwner.claimactive ? "Active" : "Inactive"
-            }`
-          );
+          }).bindPopup(this.formatLandClaimPopup(lcbOwner, lcb));
           lcbLayer.addLayer(lcbArea);
         }
       }
@@ -284,7 +368,7 @@ export default {
         );
         const marker = L.marker([trader.x, trader.z], {
           icon: traderIcon,
-        }).bindPopup(trader.name);
+        }).bindPopup(this.formatTraderName(trader.name));
         tradersLayer.addLayer(marker);
         tradersLayer.addLayer(traderRec);
       }
@@ -315,11 +399,7 @@ export default {
         // Create the player marker & area
         const marker = L.marker([player.position.x, player.position.z], {
           icon: playerIcon,
-        }).bindPopup(
-          `${player.name} - ${player.steamid} <br> Position: ${
-            player.position.x
-          } ${player.position.y} ${player.position.z}`
-        );
+        }).bindPopup(this.formatPlayerPopup(player));
         playersLayer.addLayer(marker);
       }
       return playersLayer;
@@ -399,11 +479,7 @@ export default {
       for (const vehicle of currentVehicles.Vehicles) {
         const marker = L.marker([vehicle.posX, vehicle.posZ], {
           icon: vehicleIcon,
-        }).bindPopup(
-          `Vehicle: ${vehicle.name} <br> Position: ${vehicle.posX} ${
-            vehicle.posY
-          }  ${vehicle.posZ}`
-        );
+        }).bindPopup(this.formatVehiclePopup(vehicle));
         vehiclesLayer.addLayer(marker);
       }
     },
