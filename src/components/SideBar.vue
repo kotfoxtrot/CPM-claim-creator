@@ -1,6 +1,11 @@
 <template>
   <nav>
-    <sidebar-menu :menu="menu" @item-click="onItemClick">
+    <sidebar-menu
+      :menu="menu"
+      :collapsed="collapsed"
+      @collapse="onCollapse"
+      @item-click="onItemClick"
+    >
       <span slot="toggle-icon">
         <font-awesome-icon icon="arrows-alt-h" size="xl" />
       </span>
@@ -65,6 +70,9 @@ export default {
     }
   },
   methods: {
+    onCollapse(collapsed) {
+      this.collapsed = collapsed;
+    },
     // Hacky way to get the bootstrap modals to work with the sidebar component
     onItemClick(event, item) {
       if (item.attributes) {
@@ -86,6 +94,7 @@ export default {
   },
   data() {
     return {
+      collapsed: true,
       commands: 0,
       userStatus: {
         loggedin: false,
