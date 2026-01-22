@@ -342,9 +342,7 @@ export default {
         lcbOwner.steamid
       );
       if (!this.canCreateAdvClaims) {
-        return `Player: ${ownerLabel}<br>Status: ${
-          lcbOwner.claimactive ? "Active" : "Inactive"
-        }`;
+        return `Player: ${ownerLabel}`;
       }
       return `Player: ${ownerLabel}<br>Status: ${
         lcbOwner.claimactive ? "Active" : "Inactive"
@@ -398,7 +396,11 @@ export default {
       for (const lcbOwner of landClaimData.claimowners) {
         for (const lcb of lcbOwner.claims) {
           // Create the LCB marker & area
-          let claimcolor = lcbOwner.claimactive ? "green" : "red";
+          let claimcolor = this.canCreateAdvClaims
+            ? lcbOwner.claimactive
+              ? "green"
+              : "red"
+            : "green";
           const lcbArea = L.rectangle([
             [lcb.x - claimRadius, lcb.z - claimRadius],
             [lcb.x + claimRadius, lcb.z + claimRadius]],
